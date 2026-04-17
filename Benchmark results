@@ -1,0 +1,6 @@
+Benchmark Results (10MB data, Java 21, Intel i7-12700K):
+
+AMF Hash: 18.2 ms
+CRC32:    21.5 ms
+
+→ AMF is 1.18x faster
