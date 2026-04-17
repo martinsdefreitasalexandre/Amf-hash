@@ -1,0 +1,166 @@
+\documentclass[11pt]{article}
+
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+\title{AMF Hash: A Structured Quotient--Remainder Representation for Deterministic Hash Functions}
+\author{Alexandre Martins de Freitas\\
+Independent Researcher\\
+2026}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This paper introduces AMF Hash, a deterministic hashing method combined with a structured quotient--remainder representation, referred to as AMF Division. Unlike traditional hash functions that produce a single scalar output, AMF Hash represents results as a pair $(q, r)$, where $q$ captures coarse-scale structure and $r$ captures fine-grained residue. The method is based on a weighted positional sum and a canonical decomposition $H(D) = Mq + r$. We formalize the definitions, describe computational properties, and discuss potential applications in data partitioning and structured hashing systems.
+\end{abstract}
+
+\section{Introduction}
+
+Hash functions are fundamental tools in computer science, used in data structures, distributed systems, and integrity checking. Traditional hash functions map input data to a single integer value.
+
+This work proposes an alternative representation:
+\[
+\text{Hash}(D) \rightarrow (q, r)
+\]
+where the result is structured into two components derived from a quotient--remainder decomposition.
+
+\section{AMF Hash Definition}
+
+Let
+\[
+D = (d_0, d_1, \dots, d_{n-1}), \quad d_i \in [0,255]
+\]
+
+Define the hash function:
+\[
+H(D) = n + \sum_{i=0}^{n-1} (d_i + \alpha)(i+1)
+\]
+where $n = |D|$ is the length of the data and $\alpha$ is a constant offset (e.g., 129).
+
+\section{AMF Division}
+
+Let $M \in \mathbb{N}, M > 0$.
+
+We define the decomposition:
+\[
+H(D) = Mq + r
+\]
+such that
+\[
+0 \le r < M
+\]
+
+\subsection{Definition}
+
+The AMF hash representation is:
+\[
+\operatorname{AMFHash}_M(D) = (q, r)
+\]
+
+\subsection{Equivalent Form}
+
+\[
+\frac{H(D)}{M} = q + \frac{r}{M}
+\]
+
+\section{Interpretation}
+
+The pair $(q, r)$ provides a two-level structure:
+\begin{itemize}
+\item $q$: coarse partition index
+\item $r$: fine-grained position
+\end{itemize}
+
+Thus, the hash space can be interpreted as:
+\[
+\mathbb{Z} \times [0, M)
+\]
+
+\section{Example}
+
+Consider input:
+\[
+D = \text{"ABC"} = [65, 66, 67]
+\]
+
+Compute:
+\[
+H(D) = 3 + (65+129)\cdot1 + (66+129)\cdot2 + (67+129)\cdot3
+\]
+
+\[
+H(D) = 3 + 194 + 390 + 588 = 1175
+\]
+
+Let $M = 100$:
+\[
+1175 = 100 \cdot 11 + 75
+\]
+
+So:
+\[
+\operatorname{AMFHash}_{100}(D) = (11, 75)
+\]
+
+\section{Properties}
+
+\subsection{Determinism}
+For a fixed input $D$, $H(D)$ is deterministic.
+
+\subsection{Time Complexity}
+\[
+O(n)
+\]
+
+\subsection{Uniqueness}
+The decomposition $H(D) = Mq + r$ is unique for any $M > 0$.
+
+\subsection{Reconstruction}
+\[
+H(D) = Mq + r
+\]
+
+\section{Applications}
+
+\subsection{Data Partitioning}
+$q$ can determine storage node, and $r$ determines local position.
+
+\subsection{Structured Hash Tables}
+Bucket index corresponds to $q$, and intra-bucket offset corresponds to $r$.
+
+\subsection{Multi-Scale Hash Analysis}
+Provides hierarchical interpretation of hash values.
+
+\section{Limitations}
+
+\begin{itemize}
+\item Not a cryptographic hash function
+\item No collision resistance guarantee
+\item Linear structure may produce predictable patterns
+\end{itemize}
+
+\section{Authorship and Origin}
+
+AMF Division and AMF Hash were introduced by Alexandre Martins de Freitas (2026).
+
+The formulation is based on classical Euclidean division:
+\[
+a = bq + r, \quad 0 \le r < |b|
+\]
+
+The contribution lies in:
+\begin{itemize}
+\item explicit naming and formalization
+\item structured representation $q + r/b$
+\item integration into a hashing framework
+\end{itemize}
+
+\section{Conclusion}
+
+We introduced a structured approach to hashing based on quotient--remainder decomposition. By representing hash values as $(q, r)$, AMF Hash enables a multi-level interpretation that may be useful in computational systems requiring structured distribution.
+
+\end{document}
