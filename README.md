@@ -1,23 +1,51 @@
+AMF Hash and AMF Division
 
-ing{variant="standard" id="amf02"}
-# AMF Hash and AMF Division  
-Author: Alexandre Martins de Freitas  
-Date: 2026  
-Version: 1.0  
+Author: Alexandre Martins de FreitasDate: 2026
 
-## Abstract
-AMF Hash introduces a structured representation of hash values using quotient–remainder decomposition (AMF Division), producing a pair (q, r) instead of a single scalar.
+Abstract
 
-## AMF Hash
-H(D) = n + Σ (d_i + 129)(i+1)
+We introduce AMF Hash, a deterministic hashing method combined with a structured quotient–remainder representation (AMF Division). Unlike traditional hash functions producing a single scalar value, this approach represents hashes as a pair (q, r), enabling multi-scale interpretation.
 
-## AMF Division
-H(D) = Mq + r, 0 ≤ r < M
+AMF Hash Definition
 
-AMFHash(D) = (q, r)
+Given a byte array D:
 
-## Key Idea
-Hash = structure (coarse + fine), not just a number.
+H(D) = n + Σ (d_i + α)(i+1)
 
-## Notes
-Not c
+Where:
+
+n = length of D
+
+α = constant (e.g., 129)
+
+AMF Division
+
+For modulus M:
+
+H(D) = Mq + r0 ≤ r < M
+
+Define:
+
+AMFHash_M(D) = (q, r)
+
+Interpretation
+
+q → coarse distribution
+
+r → fine structure
+
+Properties
+
+Deterministic
+
+O(n) complexity
+
+Reversible representation via H = Mq + r
+
+Notes
+
+This is not a cryptographic hash and does not guarantee collision resistance.
+
+License
+
+Public disclosure for authorship and research purposes.
