@@ -1,19 +1,8 @@
 package com.amf;
 
-/**
- * AMF Division
- * Author: Alexandre Martins de Freitas
- *
- * Formal representation:
- * a = bq + r, with 0 <= r < |b|
- *
- * So:
- * a / b = q + r / b
- */
 public final class AMFDivision {
 
     private AMFDivision() {
-        // Utility class
     }
 
     public static final class Result {
@@ -46,7 +35,7 @@ public final class AMFDivision {
         }
 
         public double toDouble() {
-            return (double) quotient + ((double) remainder / (double) divisor);
+            return (double) dividend / (double) divisor;
         }
 
         public String asExpression() {
@@ -65,41 +54,33 @@ public final class AMFDivision {
         }
     }
 
-    /**
-     * Computes the AMF division of a by b.
-     *
-     * Returns q and r such that:
-     * a = bq + r
-     * 0 <= r < |b|
-     */
     public static Result divide(long a, long b) {
         if (b == 0) {
             throw new ArithmeticException("Division by zero");
         }
 
-        long absB = Math.abs(b);
+        long q = a / b;
+        long r = a % b;
 
-        // floorDiv/floorMod give a canonical Euclidean-style result
-        long q = Math.floorDiv(a, absB);
-        long r = Math.floorMod(a, absB);
+        // Normalize so remainder is always 0 <= r < |b|
+        if (r < 0) {
+            if (b > 0) {
+                q -= 1;
+                r += b;
+            } else {
+                q += 1;
+                r -= b; // subtracting negative b adds |b|
+            }
+        }
 
         return new Result(a, b, q, r);
     }
 
     public static void main(String[] args) {
-        Result r1 = divide(10, 3);
-        Result r2 = divide(3, 10);
-        Result r3 = divide(-10, 3);
-
-        System.out.println(r1);
-        System.out.println("Numeric value: " + r1.toDouble());
-        System.out.println();
-
-        System.out.println(r2);
-        System.out.println("Numeric value: " + r2.toDouble());
-        System.out.println();
-
-        System.out.println(r3);
-        System.out.println("Numeric value: " + r3.toDouble());
+        System.out.println(divide(10, 3));    // 3 + 1/3
+        System.out.println(divide(3, 10));    // 0 + 3/10
+        System.out.println(divide(-10, 3));   // -4 + 2/3
+        System.out.println(divide(10, -3));   // -3 + 1/-3
+        System.out.println(divide(-10, -3));  // 4 + 2/-3
     }
 }
