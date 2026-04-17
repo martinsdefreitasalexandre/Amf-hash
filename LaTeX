@@ -2,6 +2,7 @@
 
 \usepackage{amsmath, amssymb}
 \usepackage{geometry}
+\usepackage{hyperref}
 \geometry{margin=1in}
 
 \title{AMF Hash: A Structured Quotient--Remainder Representation for Deterministic Hash Functions}
@@ -15,18 +16,18 @@ Independent Researcher\\
 \maketitle
 
 \begin{abstract}
-This paper introduces AMF Hash, a deterministic hashing method combined with a structured quotient--remainder representation, referred to as AMF Division. Unlike traditional hash functions that produce a single scalar output, AMF Hash represents results as a pair $(q, r)$, where $q$ captures coarse-scale structure and $r$ captures fine-grained residue. The method is based on a weighted positional sum and a canonical decomposition $H(D) = Mq + r$. We formalize the definitions, describe computational properties, and discuss potential applications in data partitioning and structured hashing systems.
+This paper introduces AMF Hash, a deterministic hashing method combined with a structured quotient--remainder representation, referred to as AMF Division. Unlike traditional hash functions that produce a single scalar output, AMF Hash represents results as a pair $(q, r)$, where $q$ captures coarse-scale structure and $r$ captures fine-grained residue. The method is based on a weighted positional sum and a canonical decomposition $H(D) = Mq + r$. We formalize the definitions, analyze computational properties, and discuss applications in data partitioning and structured hashing systems.
 \end{abstract}
 
 \section{Introduction}
 
-Hash functions are fundamental tools in computer science, used in data structures, distributed systems, and integrity checking. Traditional hash functions map input data to a single integer value.
+Hash functions are fundamental tools in computer science, widely used in data structures, distributed systems, and data integrity verification \cite{knuth1998, cormen2009}. Traditional hash functions map input data to a single scalar value.
 
-This work proposes an alternative representation:
+In this work, we propose an alternative structured representation:
 \[
 \text{Hash}(D) \rightarrow (q, r)
 \]
-where the result is structured into two components derived from a quotient--remainder decomposition.
+where the output is decomposed into two components derived from quotient--remainder arithmetic. This representation enables a multi-level interpretation of hash values.
 
 \section{AMF Hash Definition}
 
@@ -35,28 +36,28 @@ Let
 D = (d_0, d_1, \dots, d_{n-1}), \quad d_i \in [0,255]
 \]
 
-Define the hash function:
+Define:
 \[
 H(D) = n + \sum_{i=0}^{n-1} (d_i + \alpha)(i+1)
 \]
-where $n = |D|$ is the length of the data and $\alpha$ is a constant offset (e.g., 129).
+where $n = |D|$ and $\alpha$ is a constant offset (e.g., 129).
+
+This function is deterministic and operates in linear time with respect to input size.
 
 \section{AMF Division}
 
-Let $M \in \mathbb{N}, M > 0$.
-
-We define the decomposition:
+Let $M \in \mathbb{N}, M > 0$. Define:
 \[
 H(D) = Mq + r
 \]
-such that
+such that:
 \[
 0 \le r < M
 \]
 
 \subsection{Definition}
 
-The AMF hash representation is:
+The structured AMF hash representation is:
 \[
 \operatorname{AMFHash}_M(D) = (q, r)
 \]
@@ -67,27 +68,28 @@ The AMF hash representation is:
 \frac{H(D)}{M} = q + \frac{r}{M}
 \]
 
+This formulation is based on classical Euclidean division \cite{hardy1979}.
+
 \section{Interpretation}
 
-The pair $(q, r)$ provides a two-level structure:
+The pair $(q, r)$ provides a two-level interpretation:
 \begin{itemize}
 \item $q$: coarse partition index
 \item $r$: fine-grained position
 \end{itemize}
 
-Thus, the hash space can be interpreted as:
+Thus, the hash space may be viewed as:
 \[
 \mathbb{Z} \times [0, M)
 \]
 
 \section{Example}
 
-Consider input:
+Let:
 \[
 D = \text{"ABC"} = [65, 66, 67]
 \]
 
-Compute:
 \[
 H(D) = 3 + (65+129)\cdot1 + (66+129)\cdot2 + (67+129)\cdot3
 \]
@@ -101,7 +103,6 @@ Let $M = 100$:
 1175 = 100 \cdot 11 + 75
 \]
 
-So:
 \[
 \operatorname{AMFHash}_{100}(D) = (11, 75)
 \]
@@ -109,7 +110,7 @@ So:
 \section{Properties}
 
 \subsection{Determinism}
-For a fixed input $D$, $H(D)$ is deterministic.
+The function $H(D)$ is deterministic for fixed input.
 
 \subsection{Time Complexity}
 \[
@@ -117,7 +118,7 @@ O(n)
 \]
 
 \subsection{Uniqueness}
-The decomposition $H(D) = Mq + r$ is unique for any $M > 0$.
+The decomposition $H(D) = Mq + r$ is unique.
 
 \subsection{Reconstruction}
 \[
@@ -127,20 +128,20 @@ H(D) = Mq + r
 \section{Applications}
 
 \subsection{Data Partitioning}
-$q$ can determine storage node, and $r$ determines local position.
+The value $q$ can be used to determine storage partitions, while $r$ provides intra-partition positioning.
 
 \subsection{Structured Hash Tables}
-Bucket index corresponds to $q$, and intra-bucket offset corresponds to $r$.
+The pair $(q, r)$ enables hierarchical indexing in hash table implementations.
 
 \subsection{Multi-Scale Hash Analysis}
-Provides hierarchical interpretation of hash values.
+This representation allows analysis of hash values at different granularities.
 
 \section{Limitations}
 
 \begin{itemize}
-\item Not a cryptographic hash function
-\item No collision resistance guarantee
-\item Linear structure may produce predictable patterns
+\item Not a cryptographic hash function \cite{menezes1996}
+\item No guarantee of collision resistance
+\item Linear structure may lead to predictable patterns
 \end{itemize}
 
 \section{Authorship and Origin}
@@ -161,6 +162,30 @@ The contribution lies in:
 
 \section{Conclusion}
 
-We introduced a structured approach to hashing based on quotient--remainder decomposition. By representing hash values as $(q, r)$, AMF Hash enables a multi-level interpretation that may be useful in computational systems requiring structured distribution.
+We introduced a structured approach to deterministic hashing based on quotient--remainder decomposition. By representing hash values as $(q, r)$, AMF Hash enables a multi-level interpretation that may be useful in computational systems requiring structured distribution.
+
+\begin{thebibliography}{9}
+
+\bibitem{knuth1998}
+D. E. Knuth,
+\textit{The Art of Computer Programming, Volume 3: Sorting and Searching},
+Addison-Wesley, 1998.
+
+\bibitem{cormen2009}
+T. H. Cormen, C. E. Leiserson, R. L. Rivest, C. Stein,
+\textit{Introduction to Algorithms},
+MIT Press, 2009.
+
+\bibitem{hardy1979}
+G. H. Hardy, E. M. Wright,
+\textit{An Introduction to the Theory of Numbers},
+Oxford University Press, 1979.
+
+\bibitem{menezes1996}
+A. J. Menezes, P. C. van Oorschot, S. A. Vanstone,
+\textit{Handbook of Applied Cryptography},
+CRC Press, 1996.
+
+\end{thebibliography}
 
 \end{document}
