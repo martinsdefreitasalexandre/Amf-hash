@@ -1,86 +1,81 @@
-package com.amf;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class AMFDivision {
 
-    private AMFDivision() {
-    }
-
-    public static final class Result {
-        private final long dividend;
-        private final long divisor;
-        private final long quotient;
-        private final long remainder;
-
-        public Result(long dividend, long divisor, long quotient, long remainder) {
-            this.dividend = dividend;
-            this.divisor = divisor;
-            this.quotient = quotient;
-            this.remainder = remainder;
-        }
-
-        public long getDividend() {
-            return dividend;
-        }
-
-        public long getDivisor() {
-            return divisor;
-        }
-
-        public long getQuotient() {
-            return quotient;
-        }
-
-        public long getRemainder() {
-            return remainder;
-        }
-
-        public double toDouble() {
-            return (double) dividend / (double) divisor;
-        }
-
-        public String asExpression() {
-            return quotient + " + " + remainder + "/" + divisor;
+    public record AMFFrame(BigInteger quotient, BigInteger remainder, BigInteger divisor) {
+        public BigInteger reconstruct() {
+            return divisor.multiply(quotient).add(remainder);
         }
 
         @Override
         public String toString() {
-            return "AMFDivision.Result{" +
-                    "dividend=" + dividend +
-                    ", divisor=" + divisor +
-                    ", quotient=" + quotient +
-                    ", remainder=" + remainder +
-                    ", expression='" + asExpression() + '\'' +
-                    '}';
+            return "AMFFrame{q=" + quotient + ", r=" + remainder + ", b=" + divisor + "}";
         }
     }
 
-    public static Result divide(long a, long b) {
-        if (b == 0) {
+    public static AMFFrame divide(BigInteger dividend, BigInteger divisor) {
+        if (divisor.equals(BigInteger.ZERO)) {
             throw new ArithmeticException("Division by zero");
         }
 
-        long q = a / b;
-        long r = a % b;
+        BigInteger[] qr = dividend.divideAndRemainder(divisor);
 
-        // Normalize so remainder is always 0 <= r < |b|
-        if (r < 0) {
-            if (b > 0) {
-                q -= 1;
-                r += b;
+        BigInteger q = qr[0];
+        BigInteger r = qr[1];
+
+        // Normalize remainder for Euclidean form: 0 <= r < |divisor|
+        if (r.signum() < 0) {
+            if (divisor.signum() > 0) {
+                q = q.subtract(BigInteger.ONE);
+                r = r.add(divisor);
             } else {
-                q += 1;
-                r -= b; // subtracting negative b adds |b|
+                q = q.add(BigInteger.ONE);
+                r = r.subtract(divisor);
             }
         }
 
-        return new Result(a, b, q, r);
+        return new AMFFrame(q, r, divisor);
+    }
+
+    public static List<BigInteger> expand(BigInteger dividend, BigInteger divisor, int base, int digits) {
+        if (base < 2) {
+            throw new IllegalArgumentException("Base must be >= 2");
+        }
+
+        List<BigInteger> output = new ArrayList<>();
+        BigInteger radix = BigInteger.valueOf(base);
+
+        AMFFrame frame = divide(dividend, divisor);
+
+        // Whole part
+        output.add(frame.quotient());
+
+        BigInteger remainder = frame.remainder();
+
+        // Fractional / infinite-frame continuation
+        for (int i = 0; i < digits && remainder.signum() != 0; i++) {
+            remainder = remainder.multiply(radix);
+
+            AMFFrame next = divide(remainder, divisor);
+
+            output.add(next.quotient());
+            remainder = next.remainder();
+        }
+
+        return output;
     }
 
     public static void main(String[] args) {
-        System.out.println(divide(10, 3));    // 3 + 1/3
-        System.out.println(divide(3, 10));    // 0 + 3/10
-        System.out.println(divide(-10, 3));   // -4 + 2/3
-        System.out.println(divide(10, -3));   // -3 + 1/-3
-        System.out.println(divide(-10, -3));  // 4 + 2/-3
+        BigInteger a = BigInteger.valueOf(7);
+        BigInteger b = BigInteger.valueOf(3);
+
+        AMFFrame frame = divide(a, b);
+        System.out.println(frame);
+
+        List<BigInteger> expansion = expand(a, b, 10, 10);
+        System.out.println(expansion);
+        // Output: [2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3]
     }
 }
