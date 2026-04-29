@@ -1,51 +1,27 @@
-AMF Hash and AMF Division
+# AMF Framework (Alexdkk)
 
-Author: Alexandre Martins de FreitasDate: 2026
+**Author:** Alexandre Martins de Freitas  
+**Alias:** Alexdkk  
+**Focus:** Mathematical structures · Division models · Hashing experiments · Performance-driven computation  
 
-Abstract
+---
 
-We introduce AMF Hash, a deterministic hashing method combined with a structured quotient–remainder representation (AMF Division). Unlike traditional hash functions producing a single scalar value, this approach represents hashes as a pair (q, r), enabling multi-scale interpretation.
+## Overview
 
-AMF Hash Definition
+AMF (Alexdkk Mathematical Framework) is an experimental framework that explores:
 
-Given a byte array D:
+- Structured division using quotient–remainder framing  
+- Infinite / streamed representations of rational numbers  
+- Adaptive division strategies based on operand size  
+- Lightweight checksum / hashing techniques  
 
-H(D) = n + Σ (d_i + α)(i+1)
+The goal is not to redefine mathematics, but to **organize and apply existing principles in a computationally useful way**.
 
-Where:
+---
 
-n = length of D
+## AMF Division
 
-α = constant (e.g., 129)
+AMF Division is based on the classical division structure:
 
-AMF Division
-
-For modulus M:
-
-H(D) = Mq + r0 ≤ r < M
-
-Define:
-
-AMFHash_M(D) = (q, r)
-
-Interpretation
-
-q → coarse distribution
-
-r → fine structure
-
-Properties
-
-Deterministic
-
-O(n) complexity
-
-Reversible representation via H = Mq + r
-
-Notes
-
-This is not a cryptographic hash and does not guarantee collision resistance.
-
-License
-
-Public disclosure for authorship and research purposes.
+```text
+a = bq + r
