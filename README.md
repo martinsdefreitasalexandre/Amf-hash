@@ -79,3 +79,30 @@ Software developer and independent researcher focused on performance-driven algo
 📄 License
 
 License (MIT)
+
+## 📊 Benchmark Visuals
+
+Benchmark run using the C implementation with software CRC32.
+
+**Setup**
+- Input size: `1 KB`
+- Iterations: `5,000,000`
+- Compiler: `gcc -O3`
+- CRC32 mode: software table implementation
+- Output type: `uint32_t` / int-style 32-bit result
+
+### Results
+
+| Algorithm | Time | Relative Result |
+|---|---:|---:|
+| AMF Hash | `2.691271s` | `1.00x` baseline |
+| CRC32 software | `16.986898s` | `6.31x` slower |
+
+![AMF vs CRC32 Benchmark](amf_vs_crc32_benchmark.png)
+
+### Notes
+
+This benchmark compares AMF Hash against a software CRC32 implementation.  
+Modern CPUs may include CRC32 hardware instructions, which can make CRC32 significantly faster than software CRC32.
+
+AMF Hash is experimental and should not be treated as cryptographic or as a proven replacement for CRC32 error detection.
