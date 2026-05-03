@@ -1,27 +1,20 @@
-# AMF Framework (Alexdkk)
+# 📌 AMF Hash
 
-**Author:** Alexandre Martins de Freitas  
-**Alias:** Alexdkk  
-**Focus:** Mathematical structures · Division models · Hashing experiments · Performance-driven computation  
+**AMF Hash** is a lightweight hashing algorithm focused on **high performance and simplicity**, using only basic arithmetic operations.
 
----
-
-## Overview
-
-AMF (Alexdkk Mathematical Framework) is an experimental framework that explores:
-
-- Structured division using quotient–remainder framing  
-- Infinite / streamed representations of rational numbers  
-- Adaptive division strategies based on operand size  
-- Lightweight checksum / hashing techniques  
-
-The goal is not to redefine mathematics, but to **organize and apply existing principles in a computationally useful way**.
+It is designed as an experimental alternative to traditional checksums such as CRC32, prioritizing speed and ease of implementation.
 
 ---
 
-## AMF Division
+## ⚙️ Core Idea
 
-AMF Division is based on the classical division structure:
+AMF Hash computes a deterministic value based on:
+- input length  
+- byte values  
+- positional weighting  
 
-```text
-a = bq + r
+```java
+int hash = data.length;
+for (int i = 0; i < data.length; i++) {
+    hash += (data[i] + 129) * (i + 1);
+}
