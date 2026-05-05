@@ -1,0 +1,4 @@
+Length,Samples,AMF v2 collisions,CRC32 collisions,AMF uniqueness %,CRC32 uniqueness %
+16,100000,0,2,100.0,99.998
+32,100000,0,1,100.0,99.999
+64,100000,0,2,100.0,99.998
