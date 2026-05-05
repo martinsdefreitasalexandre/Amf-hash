@@ -14,10 +14,26 @@ AMF Hash computes a deterministic value based on:
 - positional weighting  
 
 ```java
+Amfv1
 int hash = data.length;
 for (int i = 0; i < data.length; i++) {
     hash += (data[i] + 129) * (i + 1);
 }
+Amfv2
+public class AMFHashV2 {
+        int hash = data.length * 0x9E3779B9; // length included strongly
+
+        for (int i = 0; i < data.length; i++) {
+            int value = (data[i] + 129) * (i + 1);
+
+            hash ^= value;
+            hash *= 0x85EBCA6B;
+            hash ^= (hash >>> 13);
+        }
+
+        hash ^= (hash >>> 16);
+        hash *= 0xC2B2AE35;
+        hash ^= (hash >>> 16);
 
 
 
