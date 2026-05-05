@@ -15,12 +15,11 @@ AMF Hash computes a deterministic value based on:
 
 ```java
 Amfv1
-int hash = data.length;
-for (int i = 0; i < data.length; i++) {
-    hash += (data[i] + 129) * (i + 1);
-}
+        int hash = data.length;
+        for (int i = 0; i < data.length; i++) {
+            hash += (data[i] + 129) * (i + 1);
+        }
 Amfv2
-public class AMFHashV2 {
         int hash = data.length * 0x9E3779B9; // length included strongly
 
         for (int i = 0; i < data.length; i++) {
